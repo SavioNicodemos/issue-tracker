@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
-import { Button } from '@radix-ui/themes'
+import React, { useState } from 'react'
+import { Button, Callout } from '@radix-ui/themes'
 import SimpleMDE from 'react-simplemde-editor'
 import 'easymde/dist/easymde.min.css'
 import { useForm, Controller } from 'react-hook-form'
@@ -17,28 +17,46 @@ type IssueForm = {
 const NewIssuePage = () => {
   const { register, control, handleSubmit } = useForm<IssueForm>();
   const router = useRouter();
+
+  const [error, setError] = useState<string>();
+
+  async function handleCreateIssue(data: IssueForm) {
+    try {
+      const response = await axios.post('/api/issues', data);
+      console.log(response.data);
+
+      router.push('/issues');
+    } catch (error) {
+      setError('An unexpected error occurred.')
+    }
+  }
+
   return (
-    <form
-      className='max-w-xl space-y-3'
-      onSubmit={handleSubmit(async (data) => {
-        await axios.post('/api/issues', data);
-        router.push('/issues');
-      })}
-    >
-      <TextField.Root>
-        <TextField.Input placeholder='Title' {...register('title')} />
-      </TextField.Root>
+    <div className='max-w-xl mb-5'>
+      {error && (
+        <Callout.Root color='red'>
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
+      )}
+      <form
+        className='space-y-3'
+        onSubmit={handleSubmit(handleCreateIssue)}
+      >
+        <TextField.Root>
+          <TextField.Input placeholder='Title' {...register('title')} />
+        </TextField.Root>
 
-      <Controller
-        name='description'
-        control={control}
-        render={({ field }) => (
-          <SimpleMDE placeholder='Description' {...field} />
-        )}
-      />
+        <Controller
+          name='description'
+          control={control}
+          render={({ field }) => (
+            <SimpleMDE placeholder='Description' {...field} />
+          )}
+        />
 
-      <Button>Submit New Issue</Button>
-    </form>
+        <Button> Submit New Issue</Button>
+      </form>
+    </div >
   )
 }
 
