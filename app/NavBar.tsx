@@ -51,6 +51,7 @@ const NavBar = () => {
                     size='2'
                     radius='full'
                     className='cursor-pointer'
+                    referrerPolicy='no-referrer'
                   />
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
@@ -65,7 +66,6 @@ const NavBar = () => {
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
-              // <Link href='/api/auth/signout'>Log out</Link>
             )}
             {status === 'unauthenticated' && (
               <Link href='/api/auth/signin'>Log in</Link>
