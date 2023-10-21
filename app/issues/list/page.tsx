@@ -1,16 +1,26 @@
 export const dynamic = 'force-dynamic';
 
-import { IssueStatusBadge, Link } from '@/app/components';
+import { IssueStatusBadge } from '@/app/components';
 import prisma from '@/prisma/client';
-import { Status } from '@prisma/client';
+import { Issue, Status } from '@prisma/client';
+import { ArrowUpIcon } from '@radix-ui/react-icons';
 import { Table } from '@radix-ui/themes';
+import Link from 'next/link';
 import IssueActions from './IssueActions';
 
 type Props = {
   searchParams: {
     status: Status;
+    orderBy: keyof Issue;
   }
 }
+type ColumnsProps = { label: string; value: keyof Issue; className?: string }[]
+
+const columns: ColumnsProps = [
+  { label: 'Issue', value: 'title' },
+  { label: 'Status', value: 'status', className: 'hidden md:table-cell' },
+  { label: 'Created', value: 'createdAt', className: 'hidden md:table-cell' },
+];
 
 const IssuesPage = async ({ searchParams }: Props) => {
   const statuses = Object.values(Status);
@@ -31,9 +41,16 @@ const IssuesPage = async ({ searchParams }: Props) => {
       <Table.Root variant='surface'>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className='hidden md:table-cell'>Status</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className='hidden md:table-cell'>Created</Table.ColumnHeaderCell>
+            {columns.map((column) => (
+              <Table.ColumnHeaderCell key={column.value} className={column.className}>
+                <Link href={{
+                  query: { ...searchParams, orderBy: column.value },
+                }}>
+                  {column.label}
+                </Link>
+                {column.value === searchParams.orderBy && <ArrowUpIcon className='inline' />}
+              </Table.ColumnHeaderCell>
+            ))}
           </Table.Row>
         </Table.Header>
         <Table.Body>
