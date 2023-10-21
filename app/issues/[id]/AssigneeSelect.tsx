@@ -10,12 +10,7 @@ import toast, { Toaster } from 'react-hot-toast';
 const EMPTY_VALUE = 'empty';
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
-  const { data: users, error, isLoading } = useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: () => axios.get<User[]>('/api/users').then(res => res.data),
-    staleTime: 60 * 1000, // 60 seconds
-    retry: 3,
-  })
+  const { data: users, error, isLoading } = useUsers();
 
   const handleAssignIssue = async (userId: string) => {
     try {
@@ -60,5 +55,12 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
     </>
   )
 }
+
+const useUsers = () => useQuery<User[]>({
+  queryKey: ['users'],
+  queryFn: () => axios.get<User[]>('/api/users').then(res => res.data),
+  staleTime: 60 * 1000, // 60 seconds
+  retry: 3,
+})
 
 export default AssigneeSelect
