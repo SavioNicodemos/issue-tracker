@@ -1,7 +1,9 @@
 import { Pagination } from "./components";
 
-export default function Home() {
+type Props = { searchParams: { page: string } }
+
+export default function Home({ searchParams }: Props) {
   return (
-    <Pagination itemCount={100} currentPage={2} pageSize={10} />
+    <Pagination itemCount={100} currentPage={parseInt(searchParams.page)} pageSize={10} />
   )
 }
