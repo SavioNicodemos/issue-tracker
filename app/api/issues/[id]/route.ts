@@ -1,6 +1,5 @@
 import { createIssueSchema } from '@/app/validationSchemas';
 import prisma from '@/prisma/client';
-import { Issue } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 type Props = {
@@ -31,4 +30,17 @@ export async function PATCH(request: NextRequest, { params }: Props) {
   });
 
   return NextResponse.json(updatedIssue, { status: 200 });
+}
+
+export async function DELETE(request: NextRequest, { params }: Props) {
+  const issue = await prisma.issue.findUnique({
+    where: { id: Number(params.id) },
+  });
+
+  if (!issue)
+    return NextResponse.json({ error: 'Issue not found' }, { status: 404 });
+
+  await prisma.issue.delete({ where: { id: Number(params.id) } });
+
+  return NextResponse.json({ message: 'Issue deleted' }, { status: 200 });
 }
