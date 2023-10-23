@@ -46,6 +46,10 @@ export async function PATCH(request: NextRequest, { params }: Props) {
       title,
       description,
       assignedToUserId: assignedToUserId,
+      status:
+        assignedToUserId && issue.status === 'OPEN' && !issue.assignedToUserId
+          ? 'IN_PROGRESS'
+          : undefined,
     },
   });
 
