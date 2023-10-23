@@ -8,6 +8,7 @@ import AssigneeSelect from './_components/AssigneeSelect';
 import DeleteIssueButton from './_components/DeleteIssueButton';
 import EditIssueButton from './_components/EditIssueButton';
 import IssueDetails from './_components/IssueDetails';
+import StatusSelect from './_components/StatusSelect';
 
 type Props = {
   params: {
@@ -18,6 +19,10 @@ type Props = {
 const fetchIssue = cache((issueId: number) => prisma.issue.findUnique({ where: { id: issueId } }));
 
 const IssueDetailPage = async ({ params }: Props) => {
+  if (isNaN(parseInt(params.id))) {
+    return notFound();
+  }
+
   const session = await getServerSession(authOptions);
 
   const issue = await fetchIssue(parseInt(params.id));
@@ -36,6 +41,7 @@ const IssueDetailPage = async ({ params }: Props) => {
         <Box>
           <Flex direction='column' gap='4'>
             <AssigneeSelect issue={issue} />
+            <StatusSelect issue={issue} />
             <EditIssueButton issueId={issue.id} />
             <DeleteIssueButton issueId={issue.id} />
           </Flex>

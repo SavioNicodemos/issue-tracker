@@ -19,6 +19,10 @@ interface Props {
 const fetchIssue = cache((issueId: number) => prisma.issue.findUnique({ where: { id: issueId } }));
 
 const EditIssuePage = async ({ params }: Props) => {
+  if (isNaN(parseInt(params.id))) {
+    return notFound();
+  }
+
   const issue = await fetchIssue(parseInt(params.id));
 
   if (!issue) notFound();

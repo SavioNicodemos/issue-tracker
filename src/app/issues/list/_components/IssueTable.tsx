@@ -1,10 +1,10 @@
 
 import { IssueStatusBadge } from '@/components';
 import { Issue } from '@prisma/client';
-import { ArrowUpIcon } from '@radix-ui/react-icons';
 import { Table } from '@radix-ui/themes';
 import Link from 'next/link';
 import { IssueQuery } from '../page';
+import TableHeader from './TableHeader';
 
 type Props = {
   searchParams: IssueQuery;
@@ -16,16 +16,7 @@ const IssueTable = ({ issues, searchParams }: Props) => {
     <Table.Root variant='surface'>
       <Table.Header>
         <Table.Row>
-          {columns.map((column) => (
-            <Table.ColumnHeaderCell key={column.value} className={column.className}>
-              <Link href={{
-                query: { ...searchParams, orderBy: column.value },
-              }}>
-                {column.label}
-              </Link>
-              {column.value === searchParams.orderBy && <ArrowUpIcon className='inline' />}
-            </Table.ColumnHeaderCell>
-          ))}
+          <TableHeader columns={columns} searchParams={searchParams} />
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -50,7 +41,7 @@ const IssueTable = ({ issues, searchParams }: Props) => {
   )
 }
 
-type ColumnsProps = { label: string; value: keyof Issue; className?: string }[]
+export type ColumnsProps = { label: string; value: 'title' | 'status' | 'createdAt'; className?: string }[]
 const columns: ColumnsProps = [
   { label: 'Issue', value: 'title' },
   { label: 'Status', value: 'status', className: 'hidden md:table-cell' },
