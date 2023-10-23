@@ -1,6 +1,6 @@
 import { Pagination } from '@/components';
 import prisma from '@/prisma/client';
-import { Issue, Status } from '@prisma/client';
+import { Status } from '@prisma/client';
 import { Flex } from '@radix-ui/themes';
 import { Metadata } from 'next';
 import IssueActions from './_components/IssueActions';
@@ -8,8 +8,9 @@ import IssueTable, { columnNames } from './_components/IssueTable';
 
 export type IssueQuery = {
   status: Status;
-  orderBy: keyof Issue;
+  orderBy: 'title' | 'status' | 'createdAt';
   page: string;
+  order: 'asc' | 'desc';
 }
 
 type Props = {
@@ -21,8 +22,10 @@ const IssuesPage = async ({ searchParams }: Props) => {
   const status = statuses.includes(searchParams.status) ? searchParams.status : undefined;
   const where = { status }
 
+  const order = ['asc', 'desc'].includes(searchParams.order) ? searchParams.order : 'asc';
+
   const orderBy = columnNames.includes(searchParams.orderBy)
-    ? { [searchParams.orderBy]: 'asc' }
+    ? { [searchParams.orderBy]: order }
     : undefined;
 
   const page = parseInt(searchParams.page) || 1;
