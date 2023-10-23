@@ -4,7 +4,7 @@ import { Issue } from '@prisma/client';
 import { ArrowUpIcon } from '@radix-ui/react-icons';
 import { Table } from '@radix-ui/themes';
 import Link from 'next/link';
-import { IssueQuery } from './page';
+import { IssueQuery } from '../page';
 
 type Props = {
   searchParams: IssueQuery;

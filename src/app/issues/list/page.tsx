@@ -3,8 +3,8 @@ import prisma from '@/prisma/client';
 import { Issue, Status } from '@prisma/client';
 import { Flex } from '@radix-ui/themes';
 import { Metadata } from 'next';
-import IssueActions from './IssueActions';
-import IssueTable, { columnNames } from './IssueTable';
+import IssueActions from './_components/IssueActions';
+import IssueTable, { columnNames } from './_components/IssueTable';
 
 export type IssueQuery = {
   status: Status;
