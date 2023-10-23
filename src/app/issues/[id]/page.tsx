@@ -18,6 +18,10 @@ type Props = {
 const fetchIssue = cache((issueId: number) => prisma.issue.findUnique({ where: { id: issueId } }));
 
 const IssueDetailPage = async ({ params }: Props) => {
+  if (isNaN(parseInt(params.id))) {
+    return notFound();
+  }
+
   const session = await getServerSession(authOptions);
 
   const issue = await fetchIssue(parseInt(params.id));
