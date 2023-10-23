@@ -20,7 +20,7 @@ export async function PATCH(request: NextRequest, { params }: Props) {
 
   const body = await request.json();
   const validation = patchIssueSchema.safeParse(body);
-  const { assignedToUserId, title, description } = body as PatchBody;
+  const { assignedToUserId, title, description, status } = body as PatchBody;
 
   if (!validation.success)
     return NextResponse.json(validation.error.format(), { status: 400 });
@@ -49,7 +49,7 @@ export async function PATCH(request: NextRequest, { params }: Props) {
       status:
         assignedToUserId && issue.status === 'OPEN' && !issue.assignedToUserId
           ? 'IN_PROGRESS'
-          : undefined,
+          : status,
     },
   });
 
