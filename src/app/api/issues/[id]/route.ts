@@ -1,7 +1,6 @@
 import authOptions from '@/auth/authOptions';
 import prisma from '@/prisma/client';
 import { patchIssueSchema } from '@/schemas/issues';
-import { User } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import z from 'zod';
@@ -21,14 +20,13 @@ export async function PATCH(request: NextRequest, { params }: Props) {
 
   const body = await request.json();
   const validation = patchIssueSchema.safeParse(body);
-  const { assignedToUserId, title, description } = body as PatchBody;
+  const { assignedToUserId, title, description, status } = body as PatchBody;
 
   if (!validation.success)
     return NextResponse.json(validation.error.format(), { status: 400 });
 
-  let user: User | null = null;
   if (assignedToUserId) {
-    user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: assignedToUserId },
     });
 
@@ -47,7 +45,11 @@ export async function PATCH(request: NextRequest, { params }: Props) {
     data: {
       title,
       description,
-      assignedToUserId: user?.id ?? null,
+      assignedToUserId: assignedToUserId,
+      status:
+        assignedToUserId && issue.status === 'OPEN' && !issue.assignedToUserId
+          ? 'IN_PROGRESS'
+          : status,
     },
   });
 

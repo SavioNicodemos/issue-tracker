@@ -28,4 +28,5 @@ export const patchIssueSchema = z.object({
     .max(255, 'The text should be less than 255 characters.')
     .optional()
     .nullable(),
+  status: z.enum(['OPEN', 'IN_PROGRESS', 'CLOSED']).optional(),
 });
