@@ -1,7 +1,7 @@
 'use client'
 
-import { ErrorMessage, Spinner } from '@/app/components'
-import { createIssueSchema } from '@/app/validationSchemas'
+import { ErrorMessage, Spinner } from '@/components'
+import { createIssueSchema } from '@/schemas/issues'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Issue } from '@prisma/client'
 import { Button, Callout, TextField } from '@radix-ui/themes'

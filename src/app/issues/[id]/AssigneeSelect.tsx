@@ -1,6 +1,6 @@
 'use client'
 
-import { Skeleton } from '@/app/components';
+import { Skeleton } from '@/components';
 import { Issue, User } from '@prisma/client';
 import { Select } from '@radix-ui/themes';
 import { useQuery } from '@tanstack/react-query';

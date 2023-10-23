@@ -1,4 +1,4 @@
-import { Pagination } from '@/app/components';
+import { Pagination } from '@/components';
 import prisma from '@/prisma/client';
 import { Issue, Status } from '@prisma/client';
 import { Flex } from '@radix-ui/themes';

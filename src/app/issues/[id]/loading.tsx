@@ -1,4 +1,4 @@
-import { Skeleton } from '@/app/components';
+import { Skeleton } from '@/components';
 import { Box, Card, Flex } from '@radix-ui/themes';
 
 const LoadingIssueDetailPage = () => {
