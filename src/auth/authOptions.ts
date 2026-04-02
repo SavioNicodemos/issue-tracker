@@ -14,6 +14,15 @@ const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
   },
+  pages: {
+    signIn: '/auth/signin',
+  },
+  callbacks: {
+    signIn({ user }) {
+      const allowedEmails = ['nicodemosgcosta@gmail.com', 'nicodemos.alvaro@gmail.com'];
+      return allowedEmails.includes(user.email ?? '');
+    },
+  },
 };
 
 export default authOptions;
