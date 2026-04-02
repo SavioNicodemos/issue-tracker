@@ -1,9 +1,9 @@
-import { Status } from '@prisma/client'
+import { Status } from '@/libs/status'
 import { Badge } from '@radix-ui/themes';
 import React from 'react'
 
 type Props = {
-  status: Status;
+  status: string;
 }
 
 type AcceptedColors = 'red' | 'violet' | 'green';
@@ -15,7 +15,7 @@ const statusMap: Record<Status, { label: string; color: AcceptedColors; }> = {
 }
 
 const IssueStatusBadge = ({ status: selectedStatus }: Props) => {
-  const status = statusMap[selectedStatus];
+  const status = statusMap[selectedStatus as Status];
   return (
     <Badge color={status.color}>{status.label}</Badge>
   )

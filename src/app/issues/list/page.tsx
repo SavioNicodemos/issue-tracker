@@ -1,6 +1,6 @@
 import { Pagination } from '@/components';
 import prisma from '@/prisma/client';
-import { Status } from '@prisma/client';
+import { Status } from '@/libs/status';
 import { Flex } from '@radix-ui/themes';
 import { Metadata } from 'next';
 import IssueActions from './_components/IssueActions';
@@ -14,21 +14,22 @@ export type IssueQuery = {
 }
 
 type Props = {
-  searchParams: IssueQuery;
+  searchParams: Promise<IssueQuery>;
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
+  const resolvedParams = await searchParams;
   const statuses = Object.values(Status);
-  const status = statuses.includes(searchParams.status) ? searchParams.status : undefined;
+  const status = statuses.includes(resolvedParams.status) ? resolvedParams.status : undefined;
   const where = { status }
 
-  const order = ['asc', 'desc'].includes(searchParams.order) ? searchParams.order : 'asc';
+  const order = ['asc', 'desc'].includes(resolvedParams.order) ? resolvedParams.order : 'asc';
 
-  const orderBy = columnNames.includes(searchParams.orderBy)
-    ? { [searchParams.orderBy]: order }
+  const orderBy = columnNames.includes(resolvedParams.orderBy)
+    ? { [resolvedParams.orderBy]: order }
     : undefined;
 
-  const page = parseInt(searchParams.page) || 1;
+  const page = parseInt(resolvedParams.page) || 1;
   const pageSize = 10;
   const issues = await prisma.issue.findMany({
     where,
@@ -43,7 +44,7 @@ const IssuesPage = async ({ searchParams }: Props) => {
     <Flex direction='column' gap='3'>
       <IssueActions />
 
-      <IssueTable issues={issues} searchParams={searchParams} />
+      <IssueTable issues={issues} searchParams={resolvedParams} />
 
       <Pagination pageSize={pageSize} itemCount={issueCount} currentPage={page} />
     </Flex>
