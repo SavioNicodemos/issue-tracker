@@ -1,6 +1,7 @@
 'use client'
 
-import { Issue, Status } from '@prisma/client';
+import { Issue } from '@prisma/client';
+import { Status } from '@/libs/status';
 import { Select } from '@radix-ui/themes';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';

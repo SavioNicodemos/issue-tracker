@@ -37,3 +37,7 @@ next-env.d.ts
 
 # Sentry Config File
 .sentryclirc
+
+# Database
+src/prisma/dev.db
+src/prisma/dev.db-journal

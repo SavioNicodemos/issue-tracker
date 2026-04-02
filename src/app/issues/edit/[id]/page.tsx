@@ -1,29 +1,23 @@
 import IssueFormSkeleton from '@/app/issues/_components/IssueFormSkeleton';
+import IssueForm from '@/app/issues/_components/IssueFormDynamic';
 import prisma from '@/prisma/client';
-import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
-const IssueForm = dynamic(
-  () => import('@/app/issues/_components/IssueForm'),
-  {
-    ssr: false,
-    loading: () => <IssueFormSkeleton />
-  }
-);
-
 interface Props {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 const fetchIssue = cache((issueId: number) => prisma.issue.findUnique({ where: { id: issueId } }));
 
 const EditIssuePage = async ({ params }: Props) => {
-  if (isNaN(parseInt(params.id))) {
+  const { id } = await params;
+
+  if (isNaN(parseInt(id))) {
     return notFound();
   }
 
-  const issue = await fetchIssue(parseInt(params.id));
+  const issue = await fetchIssue(parseInt(id));
 
   if (!issue) notFound();
 
@@ -34,7 +28,8 @@ const EditIssuePage = async ({ params }: Props) => {
 
 
 export async function generateMetadata({ params }: Props) {
-  const issue = await fetchIssue(parseInt(params.id));
+  const { id } = await params;
+  const issue = await fetchIssue(parseInt(id));
 
   return {
     title: `Issue Tracker - Edit ${issue?.title}`,

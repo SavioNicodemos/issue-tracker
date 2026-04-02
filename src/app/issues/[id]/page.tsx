@@ -11,21 +11,21 @@ import IssueDetails from './_components/IssueDetails';
 import StatusSelect from './_components/StatusSelect';
 
 type Props = {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 };
 
 const fetchIssue = cache((issueId: number) => prisma.issue.findUnique({ where: { id: issueId } }));
 
 const IssueDetailPage = async ({ params }: Props) => {
-  if (isNaN(parseInt(params.id))) {
+  const { id } = await params;
+
+  if (isNaN(parseInt(id))) {
     return notFound();
   }
 
   const session = await getServerSession(authOptions);
 
-  const issue = await fetchIssue(parseInt(params.id));
+  const issue = await fetchIssue(parseInt(id));
 
   if (!issue) {
     return notFound();
@@ -52,7 +52,8 @@ const IssueDetailPage = async ({ params }: Props) => {
 }
 
 export async function generateMetadata({ params }: Props) {
-  const issue = await fetchIssue(parseInt(params.id));
+  const { id } = await params;
+  const issue = await fetchIssue(parseInt(id));
 
   return {
     title: issue?.title,
