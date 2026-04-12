@@ -1,14 +1,11 @@
 import authOptions from '@/auth/authOptions';
-import prisma from '@/prisma/client';
+import { getUser, patchIssue, removeIssue } from '@/lib/dataService';
 import { patchIssueSchema } from '@/schemas/issues';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import z from 'zod';
 
-type Props = {
-  params: Promise<{ id: string }>;
-};
-
+type Props = { params: Promise<{ id: string }> };
 type PatchBody = z.infer<typeof patchIssueSchema>;
 
 export async function PATCH(request: NextRequest, { params }: Props) {
@@ -19,38 +16,20 @@ export async function PATCH(request: NextRequest, { params }: Props) {
   const { id } = await params;
   const body = await request.json();
   const validation = patchIssueSchema.safeParse(body);
-  const { assignedToUserId, title, description, status } = body as PatchBody;
-
   if (!validation.success)
     return NextResponse.json(validation.error.format(), { status: 400 });
 
-  if (assignedToUserId) {
-    const user = await prisma.user.findUnique({
-      where: { id: assignedToUserId },
-    });
+  const { assignedToUserId, title, description, status } = body as PatchBody;
 
+  if (assignedToUserId) {
+    const user = await getUser(assignedToUserId);
     if (!user)
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
-  const issue = await prisma.issue.findUnique({
-    where: { id: Number(id) },
-  });
-  if (!issue)
+  const updatedIssue = await patchIssue(Number(id), { title, description, status, assignedToUserId });
+  if (!updatedIssue)
     return NextResponse.json({ error: 'Issue not found' }, { status: 404 });
-
-  const updatedIssue = await prisma.issue.update({
-    where: { id: Number(id) },
-    data: {
-      title,
-      description,
-      assignedToUserId: assignedToUserId,
-      status:
-        assignedToUserId && issue.status === 'OPEN' && !issue.assignedToUserId
-          ? 'IN_PROGRESS'
-          : status,
-    },
-  });
 
   return NextResponse.json(updatedIssue, { status: 200 });
 }
@@ -61,15 +40,9 @@ export async function DELETE(request: NextRequest, { params }: Props) {
     return NextResponse.json({ message: 'Unauthorized.' }, { status: 401 });
 
   const { id } = await params;
-
-  const issue = await prisma.issue.findUnique({
-    where: { id: Number(id) },
-  });
-
-  if (!issue)
+  const deleted = await removeIssue(Number(id));
+  if (!deleted)
     return NextResponse.json({ error: 'Issue not found' }, { status: 404 });
-
-  await prisma.issue.delete({ where: { id: Number(id) } });
 
   return NextResponse.json({ message: 'Issue deleted' }, { status: 200 });
 }

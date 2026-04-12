@@ -1,5 +1,6 @@
 import AuthProvider from '@/auth/Provider';
 import authOptions from '@/auth/authOptions';
+import MSWProvider from '@/components/MSWProvider';
 import QueryClientProvider from '@/libs/reactQuery/QueryClientProvider';
 import { Container, Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
@@ -33,14 +34,16 @@ export default async function RootLayout({
       <body>
         <QueryClientProvider>
           <AuthProvider session={session}>
-            <Theme accentColor="violet">
-              <NavBar />
-              <main className='p-5'>
-                <Container>
-                  {children}
-                </Container>
-              </main>
-            </Theme>
+            <MSWProvider>
+              <Theme accentColor="violet">
+                <NavBar />
+                <main className='p-5'>
+                  <Container>
+                    {children}
+                  </Container>
+                </main>
+              </Theme>
+            </MSWProvider>
           </AuthProvider>
         </QueryClientProvider>
       </body>

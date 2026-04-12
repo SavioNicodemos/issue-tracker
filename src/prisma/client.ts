@@ -3,11 +3,19 @@ import { PrismaClient } from '@prisma/client';
 import { createClient } from '@libsql/client';
 
 const createPrismaClient = () => {
-  const libsql = createClient({
-    url: process.env.TURSO_DATABASE_URL!,
-    authToken: process.env.TURSO_AUTH_TOKEN,
-  });
+  const url = process.env.TURSO_DATABASE_URL;
 
+  if (!url) {
+    return new Proxy({} as PrismaClient, {
+      get() {
+        throw new Error(
+          'Prisma is not available. Set TURSO_DATABASE_URL or use NEXT_PUBLIC_DEMO_MODE=true.',
+        );
+      },
+    }) as unknown as PrismaClient;
+  }
+
+  const libsql = createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN });
   const adapter = new PrismaLibSQL(libsql);
   return new PrismaClient({ adapter });
 };

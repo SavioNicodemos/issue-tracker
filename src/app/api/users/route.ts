@@ -1,11 +1,9 @@
-import prisma from '@/prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
+import { getUsers } from '@/lib/dataService';
+import { NextResponse } from 'next/server';
+
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
-  const users = await prisma.user.findMany({
-    orderBy: { name: 'asc' },
-  });
-
+export async function GET() {
+  const users = await getUsers();
   return NextResponse.json(users, { status: 200 });
 }

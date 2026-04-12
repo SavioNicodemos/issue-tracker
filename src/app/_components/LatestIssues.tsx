@@ -1,14 +1,11 @@
-import { IssueStatusBadge } from '@/components'
-import prisma from '@/prisma/client'
-import { Avatar, Card, Flex, Heading, Table } from '@radix-ui/themes'
-import Link from 'next/link'
+import { IssueStatusBadge } from '@/components';
+import { getLatestIssues } from '@/lib/dataService';
+import { Avatar, Card, Flex, Heading, Table } from '@radix-ui/themes';
+import Link from 'next/link';
 
 const LatestIssues = async () => {
-  const latestIssues = await prisma.issue.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 5,
-    include: { assignedToUser: true },
-  })
+  const latestIssues = await getLatestIssues();
+
   return (
     <Card>
       <Heading size='4' mb='5'>Latest Issues</Heading>
@@ -40,7 +37,7 @@ const LatestIssues = async () => {
         </Table.Body>
       </Table.Root>
     </Card>
-  )
-}
+  );
+};
 
-export default LatestIssues
+export default LatestIssues;

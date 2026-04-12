@@ -1,5 +1,5 @@
 import authOptions from '@/auth/authOptions';
-import prisma from '@/prisma/client';
+import { getIssue } from '@/lib/dataService';
 import { Box, Flex, Grid } from '@radix-ui/themes';
 import { getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
@@ -14,22 +14,17 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-const fetchIssue = cache((issueId: number) => prisma.issue.findUnique({ where: { id: issueId } }));
+const fetchIssue = cache((id: number) => getIssue(id));
 
 const IssueDetailPage = async ({ params }: Props) => {
   const { id } = await params;
 
-  if (isNaN(parseInt(id))) {
-    return notFound();
-  }
+  if (isNaN(parseInt(id))) return notFound();
 
   const session = await getServerSession(authOptions);
-
   const issue = await fetchIssue(parseInt(id));
 
-  if (!issue) {
-    return notFound();
-  }
+  if (!issue) return notFound();
 
   return (
     <Grid columns={{ initial: '1', sm: '5' }} gap='5'>
@@ -37,7 +32,7 @@ const IssueDetailPage = async ({ params }: Props) => {
         <IssueDetails issue={issue} />
       </Box>
 
-      {session &&
+      {session && (
         <Box>
           <Flex direction='column' gap='4'>
             <AssigneeSelect issue={issue} />
@@ -46,19 +41,15 @@ const IssueDetailPage = async ({ params }: Props) => {
             <DeleteIssueButton issueId={issue.id} />
           </Flex>
         </Box>
-      }
+      )}
     </Grid>
-  )
-}
+  );
+};
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const issue = await fetchIssue(parseInt(id));
-
-  return {
-    title: issue?.title,
-    description: issue?.description,
-  }
+  return { title: issue?.title, description: issue?.description };
 }
 
-export default IssueDetailPage
+export default IssueDetailPage;
