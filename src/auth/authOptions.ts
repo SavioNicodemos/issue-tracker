@@ -20,7 +20,7 @@ const authOptions: NextAuthOptions = {
               id: 'demo-user',
               name: 'Demo User',
               email: 'demo@example.com',
-              image: null,
+              image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophia',
             };
           },
         }),
